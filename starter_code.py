@@ -33,7 +33,12 @@ def bubble_sort(arr):
     # Hint: Use nested loops - outer loop for passes, inner loop for comparisons
     # Hint: Compare adjacent elements and swap if left > right
     
-    pass  # Delete this and write your code
+    for i in range(len(arr) - 1):
+        for j in range(len(arr) - i - 1):
+            if arr[j]['price'] > arr[j+1]['price']:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+
+    return arr
 
 
 def selection_sort(arr):
@@ -55,7 +60,15 @@ def selection_sort(arr):
     # TODO: Implement selection sort
     # Hint: Find minimum element in unsorted portion, swap it with first unsorted element
     
-    pass  # Delete this and write your code
+    for i in range(len(arr) - 1):
+        min_idx = i
+        for j in range(i+1, len(arr)):
+            if arr[j]['price'] < arr[min_idx]['price']:
+                min_idx = j
+
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+
+    return arr
 
 
 def insertion_sort(arr):
@@ -77,7 +90,16 @@ def insertion_sort(arr):
     # TODO: Implement insertion sort
     # Hint: Start from second element, insert it into correct position in sorted portion
     
-    pass  # Delete this and write your code
+    for i in range(1, len(arr)):
+        j = i - 1
+        key = arr[i]
+
+        while j >= 0 and key['price'] < arr[j]['price']:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+    return arr
 
 
 def merge_sort(arr):
@@ -101,7 +123,27 @@ def merge_sort(arr):
     # Hint: Recursive case - split array in half, sort each half, merge sorted halves
     # Hint: You'll need a helper function to merge two sorted arrays
     
-    pass  # Delete this and write your code
+    if len(arr) <= 1:
+        return arr
+    elif len(arr) == 2:
+        if arr[0]['price'] <= arr[1]['price']:
+            return arr
+        else:
+            return [arr[1], arr[0]]
+    else:
+        first_half = merge_sort(arr[:len(arr)//2])
+        second_half = merge_sort(arr[len(arr)//2:])
+        merged_arr = []
+        while len(first_half) > 0 and len(second_half) > 0:
+            if first_half[0]['price'] <= second_half[0]['price']:
+                merged_arr.append(first_half.pop(0))
+            else:
+                merged_arr.append(second_half.pop(0))
+        return merged_arr + first_half + second_half
+
+
+
+
 
 
 # ============================================================================
@@ -126,18 +168,38 @@ def demonstrate_stability():
         {"name": "Tool D", "price": 999, "original_position": 3},
         {"name": "Widget E", "price": 1999, "original_position": 4},
     ]
-    
+    correct_order = [1,3,0,2,4]
     # TODO: Sort products by price using each algorithm
     # Hint: You'll need to modify your sorting functions to work with dictionaries
     # Hint: Or extract prices, sort them, and check if stable algorithms maintain original order
     # Hint: For stable sort: items with price 999 should stay in order (B before D)
     # Hint: For stable sort: items with price 1999 should stay in order (A before C before E)
-    
+    bubbled_products = bubble_sort(products)
+    selection_products = selection_sort(products)
+    insertion_products = insertion_sort(products)
+    merged_products = merge_sort(products)
+
+    print(merged_products)
+    bubble_stablility = "Stable"
+    selection_stablility = "Stable"
+    insertion_stablility = "Stable"
+    merge_stablility = "Stable"
+
+    for i in range(len(bubbled_products)):
+        if bubbled_products[i]['original_position'] != correct_order[i]:
+            bubble_stablility = "Unstable"
+        if selection_products[i]['original_position'] != correct_order[i]:
+            selection_stablility = "Unstable"
+        if insertion_products[i]['original_position'] != correct_order[i]:
+            insertion_stablility = "Unstable"
+        if merged_products[i]['original_position'] != correct_order[i]:
+            merge_stablility = "Unstable"
+
     results = {
-        "bubble_sort": "Not tested",
-        "selection_sort": "Not tested", 
-        "insertion_sort": "Not tested",
-        "merge_sort": "Not tested"
+        "bubble_sort": bubble_stablility,
+        "selection_sort": selection_stablility,
+        "insertion_sort": insertion_stablility,
+        "merge_sort": merge_stablility
     }
     
     # TODO: Test each algorithm and update results dictionary with "Stable" or "Unstable"
@@ -289,6 +351,6 @@ if __name__ == "__main__":
     
     # test_sorting_correctness()
     # benchmark_all_datasets()
-    # analyze_stability()
+    analyze_stability()
     
-    print("\n⚠ Uncomment the test functions in the main block to run benchmarks!")
+    # print("\n⚠ Uncomment the test functions in the main block to run benchmarks!")
